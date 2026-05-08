@@ -1,3 +1,14 @@
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Monter le dossier static
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Rediriger la racine vers la landing page
+@app.get("/")
+def root():
+    return FileResponse("static/index.html")
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -102,3 +113,4 @@ def download_pdf(profile_id: str):
 @app.get("/health")
 def health():
     return {"status": "sovereign", "timestamp": datetime.utcnow().isoformat()}
+
