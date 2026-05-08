@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+SC:wght@300;400;500&display=swap');
+
+  :root {
+    --black:   #07060a;
+    --deep:    #0e0c12;
+    --gold:    #c9a84c;
+    --gold-lt: #e8cc82;
+    --gold-dk: #7a5e1e;
+    --cream:   #f0e6cf;
+    --muted:   #7a6e5e;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 11pt;
+    line-height: 1.7;
+  }
+
+  /* ── Cover page ─────────────────────────────── */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover {
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 50px;
+  }
+
+  /* Corner ornaments */
+  .corner {
+    position: absolute;
+    width: 50px; height: 50px;
+    border-color: var(--gold-dk);
+    border-style: solid;
+    opacity: .5;
+  }
+  .corner.tl { top:20px; left:20px; border-width:1px 0 0 1px; }
+  .corner.tr { top:20px; right:20px; border-width:1px 1px 0 0; }
+  .corner.bl { bottom:20px; left:20px; border-width:0 0 1px 1px; }
+  .corner.br { bottom:20px; right:20px; border-width:0 1px 1px 0; }
+
+  .cover-eyebrow {
+    font-family: 'Cormorant SC', serif;
+    font-size: 7pt;
+    letter-spacing: .5em;
+    color: var(--gold-dk);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .cover-crest {
+    width: 80px; height: 80px;
+    margin: 0 auto 28px;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38pt;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: .02em;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+  .cover-title em {
+    display: block;
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cover-divider {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 28px auto;
+  }
+
+  .cover-name {
+    font-family: 'Cormorant SC', serif;
+    font-size: 16pt;
+    font-weight: 400;
+    letter-spacing: .15em;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .cover-rank-badge {
+    display: inline-block;
+    font-family: 'Cormorant SC', serif;
+    font-size: 6.5pt;
+    letter-spacing: .3em;
+    color: var(--black);
+    background: var(--gold);
+    padding: 5px 20px;
+    margin-top: 8px;
+  }
+
+  .cover-footer {
+    position: absolute;
+    bottom: 32px; left: 0; right: 0;
+    text-align: center;
+    font-family: 'Cormorant SC', serif;
+    font-size: 6pt;
+    letter-spacing: .4em;
+    color: var(--muted);
+  }
+
+  /* ── Inner pages ────────────────────────────── */
+  .inner {
+    padding: 44px 50px;
+    background: var(--black);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(201,168,76,.15);
+  }
+  .ph-logo {
+    font-family: 'Cormorant SC', serif;
+    font-size: 7pt;
+    letter-spacing: .4em;
+    color: var(--gold-dk);
+  }
+  .ph-member {
+    font-family: 'Cormorant SC', serif;
+    font-size: 6pt;
+    letter-spacing: .25em;
+    color: var(--muted);
+  }
+
+  .section-title {
+    font-family: 'Cormorant SC', serif;
+    font-size: 6.5pt;
+    letter-spacing: .5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22pt;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  h2 em { color: var(--gold); font-style: italic; }
+
+  p {
+    color: rgba(240,230,207,.7);
+    font-size: 10.5pt;
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  p strong { color: var(--cream); font-weight: 500; }
+
+  /* ── Score band ─────────────────────────────── */
+  .scores-band {
+    display: flex;
+    border: 1px solid rgba(201,168,76,.15);
+    margin: 28px 0;
+  }
+  .score-box {
+    flex: 1;
+    padding: 18px 14px;
+    text-align: center;
+    border-right: 1px solid rgba(201,168,76,.12);
+  }
+  .score-box:last-child { border-right: none; }
+  .score-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26pt;
+    font-weight: 300;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+  }
+  .score-lbl {
+    font-family: 'Cormorant SC', serif;
+    font-size: 5.5pt;
+    letter-spacing: .3em;
+    color: var(--muted);
+    display: block;
+    margin-top: 5px;
+  }
+
+  /* ── Motto block ─────────────────────────────── */
+  .motto-block {
+    border-left: 1px solid var(--gold);
+    padding: 14px 22px;
+    margin: 24px 0;
+    background: rgba(201,168,76,.03);
+  }
+  .motto-latin {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15pt;
+    font-style: italic;
+    color: var(--gold-lt);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .motto-english {
+    font-family: 'Cormorant SC', serif;
+    font-size: 6.5pt;
+    letter-spacing: .3em;
+    color: var(--muted);
+  }
+
+  /* ── Strengths ────────────────────────────────── */
+  .strengths-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0;
+  }
+  .strength-tag {
+    font-family: 'Cormorant SC', serif;
+    font-size: 6.5pt;
+    letter-spacing: .25em;
+    color: var(--gold-dk);
+    border: 1px solid rgba(201,168,76,.2);
+    padding: 5px 14px;
+  }
+
+  /* ── Advisors ─────────────────────────────────── */
+  .advisor {
+    border: 1px solid rgba(201,168,76,.1);
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    background: rgba(201,168,76,.02);
+  }
+  .advisor-name {
+    font-family: 'Cormorant SC', serif;
+    font-size: 10pt;
+    letter-spacing: .15em;
+    color: var(--cream);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .advisor-era {
+    font-family: 'Cormorant SC', serif;
+    font-size: 5.5pt;
+    letter-spacing: .3em;
+    color: var(--gold-dk);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .advisor-counsel {
+    font-size: 9.5pt;
+    color: rgba(240,230,207,.6);
+    font-style: italic;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ── Crest description ─────────────────────────── */
+  .crest-box {
+    border: 1px solid rgba(201,168,76,.15);
+    padding: 22px;
+    background: rgba(201,168,76,.02);
+    margin: 18px 0;
+    text-align: center;
+  }
+
+  /* ── Blueprint timeline ────────────────────────── */
+  .blueprint {
+    border-left: 1px solid rgba(201,168,76,.2);
+    padding-left: 20px;
+    margin: 18px 0;
+  }
+
+  /* ── Page footer ─────────────────────────────────── */
+  .page-footer {
+    margin-top: 32px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(201,168,76,.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pf-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 7pt;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .pf-date {
+    font-family: 'Cormorant SC', serif;
+    font-size: 6pt;
+    letter-spacing: .3em;
+    color: var(--gold-dk);
+  }
+
+  .gold-line {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dk), transparent);
+    margin: 22px 0;
+    opacity: .5;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 18px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PAGE 1 — COVER                              -->
+<!-- ════════════════════════════════════════════ -->
+<div class="page cover">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <p class="cover-eyebrow">Est. MMXXV · London · Member {{ member_id }}</p>
+
+  <!-- Inline SVG crest -->
+  <div class="cover-crest">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+      <circle cx="40" cy="40" r="38" stroke="#c9a84c" stroke-width=".6" opacity=".35"/>
+      <circle cx="40" cy="40" r="32" stroke="#c9a84c" stroke-width=".4" opacity=".2"/>
+      <path d="M24 34 L30 24 L40 29 L50 24 L56 34 L52 37 H28 Z" stroke="#c9a84c" stroke-width=".8" fill="rgba(201,168,76,.08)"/>
+      <path d="M28 37 H52 V50 Q40 57 28 50 Z" stroke="#c9a84c" stroke-width=".8" fill="rgba(201,168,76,.06)"/>
+      <line x1="40" y1="37" x2="40" y2="57" stroke="#c9a84c" stroke-width=".4" opacity=".4"/>
+      <line x1="28" y1="48" x2="52" y2="48" stroke="#c9a84c" stroke-width=".4" opacity=".4"/>
+    </svg>
+  </div>
+
+  <h1 class="cover-title">
+    Sterling<br><em>Sovereign</em>
+  </h1>
+
+  <div class="cover-divider"></div>
+
+  <div class="cover-name">{{ full_name }}</div>
+  <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:10pt; color:var(--gold); margin-top:6px;">
+    {{ archetype }}
+  </div>
+  <div class="cover-rank-badge">{{ rank }} · Order of Sovereigns</div>
+
+  <p class="cover-footer">Sterling Sovereign · Confidential Identity Profile · {{ generated_at }}</p>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PAGE 2 — PRESTIGE ASSESSMENT                -->
+<!-- ════════════════════════════════════════════ -->
+<div class="page inner">
+  <div class="page-header">
+    <span class="ph-logo">Sterling Sovereign</span>
+    <span class="ph-member">{{ full_name }} · {{ member_id }}</span>
+  </div>
+
+  <span class="section-title">Prestige Assessment</span>
+  <h2>Your Sovereign <em>Score</em></h2>
+
+  <div class="scores-band">
+    <div class="score-box">
+      <span class="score-val">{{ prestige_score }}</span>
+      <span class="score-lbl">Prestige Score</span>
+    </div>
+    {% if founder_bloodline_score is defined %}
+    <div class="score-box">
+      <span class="score-val">{{ founder_bloodline_score }}</span>
+      <span class="score-lbl">Bloodline Score</span>
+    </div>
+    {% endif %}
+    {% if wealth_projection_10y is defined %}
+    <div class="score-box">
+      <span class="score-val" style="font-size:14pt; padding-top:4px;">{{ wealth_projection_10y.split('—')[0].strip() }}</span>
+      <span class="score-lbl">2034 Projection</span>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="motto-block">
+    <span class="motto-latin">{{ motto_latin }}</span>
+    <span class="motto-english">{{ motto_english }}</span>
+  </div>
+
+  <span class="section-title">Archetype</span>
+  <h2 style="font-size:18pt;">{{ archetype }}</h2>
+  <p>{{ archetype_description }}</p>
+
+  <div class="gold-line"></div>
+
+  <span class="section-title">Core Strengths</span>
+  <div class="strengths-row">
+    {% for s in core_strengths %}
+    <span class="strength-tag">{{ s }}</span>
+    {% endfor %}
+  </div>
+
+  <div class="page-footer">
+    <span class="pf-note">For entertainment and inspirational purposes. Not financial advice.</span>
+    <span class="pf-date">{{ generated_at }}</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PAGE 3 — DYNASTY & ADVISORS                 -->
+<!-- ════════════════════════════════════════════ -->
+{% if dynasty_blueprint is defined or invisible_advisors is defined %}
+<div class="page inner">
+  <div class="page-header">
+    <span class="ph-logo">Sterling Sovereign</span>
+    <span class="ph-member">{{ full_name }} · {{ member_id }}</span>
+  </div>
+
+  {% if dynasty_blueprint is defined %}
+  <span class="section-title">Dynasty Blueprint</span>
+  <h2>Your <em>10-Year</em> Sovereign Path</h2>
+
+  <div class="blueprint">
+    <p>{{ dynasty_blueprint }}</p>
+    {% if wealth_projection_10y is defined %}
+    <p><strong>Projected Outcome:</strong> {{ wealth_projection_10y }}</p>
+    {% endif %}
+  </div>
+
+  <div class="gold-line"></div>
+  {% endif %}
+
+  {% if invisible_advisors is defined %}
+  <span class="section-title">Board of Invisible Advisors</span>
+  <h2>Those who would <em>counsel</em> you</h2>
+
+  {% for adv in invisible_advisors %}
+  <div class="advisor">
+    <span class="advisor-name">{{ adv.name }}</span>
+    <span class="advisor-era">{{ adv.era }}</span>
+    <p class="advisor-counsel">"{{ adv.counsel }}"</p>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <div class="page-footer">
+    <span class="pf-note">For entertainment and inspirational purposes. Not financial advice.</span>
+    <span class="pf-date">{{ generated_at }}</span>
+  </div>
+</div>
+{% endif %}
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PAGE 4 — COAT OF ARMS + BRAND (CHANCELLOR)  -->
+<!-- ════════════════════════════════════════════ -->
+{% if coat_of_arms_description is defined or reputation_strategy is defined %}
+<div class="page inner">
+  <div class="page-header">
+    <span class="ph-logo">Sterling Sovereign</span>
+    <span class="ph-member">{{ full_name }} · {{ member_id }}</span>
+  </div>
+
+  {% if coat_of_arms_description is defined %}
+  <span class="section-title">Heraldic Identity</span>
+  <h2>Your AI <em>Coat of Arms</em></h2>
+
+  <div class="crest-box">
+    <p style="font-style:italic; color:var(--gold); font-size:10pt; margin:0;">
+      {{ coat_of_arms_description }}
+    </p>
+  </div>
+
+  <div class="gold-line"></div>
+  {% endif %}
+
+  {% if reputation_strategy is defined %}
+  <span class="section-title">Reputation Strategy</span>
+  <h2>Positioning <em>for Power</em></h2>
+  <p>{{ reputation_strategy }}</p>
+  {% endif %}
+
+  {% if personal_brand_brief is defined %}
+  <div class="gold-line"></div>
+  <span class="section-title">Personal Brand Brief</span>
+
+  <div class="two-col">
+    <div>
+      <span class="section-title" style="font-size:5.5pt; margin-bottom:6px;">Headline</span>
+      <p style="color:var(--cream); font-weight:500;">{{ personal_brand_brief.headline }}</p>
+    </div>
+    <div>
+      <span class="section-title" style="font-size:5.5pt; margin-bottom:6px;">Tone of Voice</span>
+      <p>{{ personal_brand_brief.tone_of_voice }}</p>
+    </div>
+  </div>
+  <p>{{ personal_brand_brief.positioning }}</p>
+  {% endif %}
+
+  {% if network_gravity_analysis is defined %}
+  <div class="gold-line"></div>
+  <span class="section-title">Network Gravity</span>
+  <p>{{ network_gravity_analysis }}</p>
+  {% endif %}
+
+  <div class="page-footer">
+    <span class="pf-note">For entertainment and inspirational purposes. Not financial advice.</span>
+    <span class="pf-date">{{ generated_at }}</span>
+  </div>
+</div>
+{% endif %}
+
+</body>
+</html>
