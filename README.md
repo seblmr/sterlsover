@@ -75,3 +75,5 @@ curl -X POST http://localhost:8000/generate-profile \
 | baron | £9 | 2 | Score, Archetype, Motto, Strengths |
 | duke | £29 | 3 | + Blueprint, Advisors, Crest, Bloodline |
 | chancellor | £99 | 4 | + Reputation, Brand Brief, Network |
+=======
+# sterlsover
