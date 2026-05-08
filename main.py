@@ -1,14 +1,3 @@
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
-# Monter le dossier static
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Rediriger la racine vers la landing page
-@app.get("/")
-def root():
-    return FileResponse("static/index.html")
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -52,6 +41,18 @@ class ProfileResponse(BaseModel):
     pdf_url: str
     summary: dict
 
+# Static
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Monter le dossier static
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Rediriger la racine vers la landing page
+@app.get("/")
+def root():
+    return FileResponse("static/index.html")
 
 # ── Endpoint principal ─────────────────────────────────────────────────
 @app.post("/generate-profile", response_model=ProfileResponse)
