@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sterling Sovereign — Your Assessment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+SC:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #06050a;
+      --deep:    #0d0b11;
+      --surface: #121018;
+      --panel:   #0f0d14;
+      --gold:    #c9a84c;
+      --gold-lt: #e8cc82;
+      --gold-dk: #6b5119;
+      --gold-md: #a07a2a;
+      --cream:   #f0e6cf;
+      --muted:   #6e6358;
+      --border:  rgba(201,168,76,.14);
+      --err:     #c45a3a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: .3;
+    }
+
+    /* ── Cursor ──────────────────────────────────────── */
+    #cur { position: fixed; z-index: 9999; pointer-events: none; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; transform: translate(-50%,-50%); transition: width .15s, height .15s; mix-blend-mode: difference; }
+    #cur-ring { position: fixed; z-index: 9998; pointer-events: none; width: 32px; height: 32px; border: 1px solid rgba(201,168,76,.45); border-radius: 50%; transform: translate(-50%,-50%); transition: width .3s cubic-bezier(.175,.885,.32,1.275), height .3s cubic-bezier(.175,.885,.32,1.275), opacity .3s; }
+
+    /* ── Layout ──────────────────────────────────────── */
+    .page-wrap {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Left sidebar ────────────────────────────────── */
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 52px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky; top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sb-top { flex: 1; }
+
+    .sb-logo {
+      font-family: 'Cormorant SC', serif;
+      font-size: .72rem;
+      letter-spacing: .42em;
+      color: var(--gold);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 56px;
+    }
+
+    .sb-crest { margin-bottom: 40px; }
+
+    .sb-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.1rem;
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+    .sb-title em { font-style: italic; color: var(--gold); }
+
+    .sb-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: .95rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 52px;
+    }
+
+    /* Steps indicator */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(201,168,76,.06);
+      cursor: none;
+    }
+    .step-item:last-child { border-bottom: none; }
+
+    .step-dot {
+      width: 22px; height: 22px;
+      border: 1px solid var(--gold-dk);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: border-color .3s, background .3s;
+    }
+    .step-dot span {
+      font-family: 'Cormorant SC', serif;
+      font-size: .5rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      transition: color .3s;
+    }
+    .step-item.active .step-dot {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.1);
+    }
+    .step-item.active .step-dot span { color: var(--gold); }
+    .step-item.done .step-dot {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .step-item.done .step-dot span { color: var(--black); }
+
+    .step-label {
+      font-family: 'Cormorant SC', serif;
+      font-size: .62rem;
+      letter-spacing: .28em;
+      color: var(--muted);
+      transition: color .3s;
+      padding-top: 3px;
+    }
+    .step-item.active .step-label { color: var(--cream); }
+    .step-item.done .step-label { color: var(--gold-md); }
+
+    .sb-note {
+      font-size: .78rem;
+      font-style: italic;
+      color: var(--gold-dk);
+      line-height: 1.6;
+      border-top: 1px solid var(--border);
+      padding-top: 22px;
+    }
+
+    /* Sidebar glow */
+    .sb-glow {
+      position: absolute; bottom: -80px; left: -80px;
+      width: 320px; height: 320px;
+      background: radial-gradient(ellipse, rgba(201,168,76,.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* ── Main content ────────────────────────────────── */
+    .main {
+      padding: 72px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 64px;
+      position: relative;
+    }
+    .progress-fill {
+      position: absolute; top: 0; left: 0; height: 1px;
+      background: linear-gradient(90deg, var(--gold-dk), var(--gold));
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+    .progress-label {
+      position: absolute; right: 0; top: -22px;
+      font-family: 'Cormorant SC', serif;
+      font-size: .55rem;
+      letter-spacing: .3em;
+      color: var(--muted);
+    }
+
+    /* ── Step panels ─────────────────────────────────── */
+    .step-panel {
+      display: none;
+      animation: stepIn .5s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    .step-panel.active { display: block; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateX(18px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .panel-eyebrow {
+      font-family: 'Cormorant SC', serif;
+      font-size: .58rem;
+      letter-spacing: .5em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--cream);
+      margin-bottom: 10px;
+    }
+    .panel-title em { font-style: italic; color: var(--gold); }
+    .panel-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 52px;
+      line-height: 1.75;
+    }
+
+    /* ── Form fields ─────────────────────────────────── */
+    .fields { display: flex; flex-direction: column; gap: 28px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .field label {
+      font-family: 'Cormorant SC', serif;
+      font-size: .58rem;
+      letter-spacing: .38em;
+      color: var(--muted);
+    }
+    .field label .req { color: var(--gold-dk); }
+
+    .field input,
+    .field select,
+    .field textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(201,168,76,.22);
+      padding: 12px 0;
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--cream);
+      outline: none;
+      transition: border-color .3s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--gold);
+    }
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(110,99,88,.5);
+      font-style: italic;
+    }
+    .field select option {
+      background: var(--deep);
+      color: var(--cream);
+    }
+    .field textarea {
+      resize: none;
+      height: 80px;
+      line-height: 1.7;
+    }
+    .field .hint {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .field.error input,
+    .field.error select,
+    .field.error textarea { border-color: var(--err); }
+    .field .err-msg {
+      font-size: .78rem;
+      color: var(--err);
+      font-style: italic;
+      display: none;
+    }
+    .field.error .err-msg { display: block; }
+
+    /* Tier cards */
+    .tier-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .tier-card {
+      border: 1px solid var(--border);
+      padding: 28px 22px;
+      cursor: none;
+      transition: border-color .3s, background .3s;
+      position: relative;
+    }
+    .tier-card:hover { background: rgba(201,168,76,.03); }
+    .tier-card.selected {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.06);
+    }
+    .tier-card.popular::before {
+      content: 'Popular';
+      position: absolute; top: -1px; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cormorant SC', serif;
+      font-size: .48rem;
+      letter-spacing: .28em;
+      color: var(--black);
+      background: var(--gold);
+      padding: 4px 14px;
+      white-space: nowrap;
+    }
+    .tc-name {
+      font-family: 'Cormorant SC', serif;
+      font-size: .7rem;
+      letter-spacing: .28em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .tc-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .tc-feats { list-style: none; }
+    .tc-feats li {
+      font-size: .82rem;
+      color: var(--muted);
+      padding: 4px 0;
+      display: flex; gap: 8px;
+    }
+    .tc-feats li::before { content: '—'; color: var(--gold-dk); flex-shrink: 0; }
+    .tier-card input[type="radio"] { display: none; }
+
+    /* ── Nav buttons ─────────────────────────────────── */
+    .form-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 56px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-back {
+      font-family: 'Cormorant SC', serif;
+      font-size: .62rem;
+      letter-spacing: .28em;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: none;
+      display: flex; align-items: center; gap: 10px;
+      transition: color .3s;
+      padding: 0;
+    }
+    .btn-back:hover { color: var(--cream); }
+    .btn-back svg { transition: transform .3s; }
+    .btn-back:hover svg { transform: translateX(-3px); }
+
+    .btn-next {
+      font-family: 'Cormorant SC', serif;
+      font-size: .68rem;
+      letter-spacing: .25em;
+      color: var(--black);
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold), var(--gold-dk));
+      background-size: 200%;
+      border: none;
+      padding: 15px 48px;
+      cursor: none;
+      display: flex; align-items: center; gap: 12px;
+      transition: background-position .5s, box-shadow .4s;
+    }
+    .btn-next:hover {
+      background-position: 100%;
+      box-shadow: 0 4px 24px rgba(201,168,76,.18);
+    }
+    .btn-next svg { transition: transform .3s; }
+    .btn-next:hover svg { transform: translateX(3px); }
+
+    /* ── Loading state ───────────────────────────────── */
+    #step-loading {
+      text-align: center;
+      padding: 40px 0;
+    }
+    .loader {
+      width: 48px; height: 48px;
+      margin: 0 auto 32px;
+      position: relative;
+    }
+    .loader::before, .loader::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 1px solid transparent;
+    }
+    .loader::before {
+      border-top-color: var(--gold);
+      animation: spin 1s linear infinite;
+    }
+    .loader::after {
+      border-bottom-color: rgba(201,168,76,.25);
+      animation: spin 1.5s linear infinite reverse;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 12px;
+    }
+    .loading-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .loading-steps { list-style: none; margin-top: 36px; }
+    .loading-steps li {
+      font-family: 'Cormorant SC', serif;
+      font-size: .58rem;
+      letter-spacing: .3em;
+      color: var(--muted);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      display: flex; gap: 12px; align-items: center;
+      transition: color .5s;
+    }
+    .loading-steps li.done { color: var(--gold); }
+    .loading-steps li::before { content: '○'; font-size: .7rem; }
+    .loading-steps li.done::before { content: '◆'; color: var(--gold); }
+
+    /* ── Success state ───────────────────────────────── */
+    #step-success { text-align: center; }
+    .success-crest { margin: 0 auto 36px; }
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+    .success-title em { color: var(--gold); font-style: italic; }
+    .success-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 44px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Summary card */
+    .summary-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      max-width: 420px;
+      margin: 0 auto 36px;
+      overflow: hidden;
+    }
+    .sc-head {
+      background: linear-gradient(135deg, #1c1508, #0e0c12);
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .sc-brand { font-family: 'Cormorant SC', serif; font-size: .58rem; letter-spacing: .38em; color: var(--gold); }
+    .sc-mem   { font-family: 'Cormorant SC', serif; font-size: .5rem;  letter-spacing: .25em; color: var(--gold-dk); }
+    .sc-body  { padding: 28px; }
+    .sc-name  { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 300; color: var(--cream); margin-bottom: 2px; }
+    .sc-arch  { font-family: 'Cormorant SC', serif; font-size: .55rem; letter-spacing: .3em; color: var(--gold); display: block; margin-bottom: 22px; }
+    .sc-scores { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); margin-bottom: 22px; }
+    .sc-score  { background: var(--surface); padding: 16px 10px; text-align: center; }
+    .sc-val    { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; color: var(--gold); display: block; line-height: 1; }
+    .sc-lbl    { font-family: 'Cormorant SC', serif; font-size: .48rem; letter-spacing: .2em; color: var(--muted); display: block; margin-top: 4px; }
+    .sc-motto  { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .95rem; color: rgba(201,168,76,.55); text-align: center; padding: 14px; border: 1px solid rgba(201,168,76,.1); background: rgba(201,168,76,.025); }
+    .sc-badge  { text-align: center; margin-top: 18px; }
+    .sc-badge span { font-family: 'Cormorant SC', serif; font-size: .52rem; letter-spacing: .26em; color: var(--black); background: linear-gradient(135deg, var(--gold-lt), var(--gold)); padding: 5px 16px; }
+
+    .btn-download {
+      font-family: 'Cormorant SC', serif;
+      font-size: .68rem;
+      letter-spacing: .25em;
+      color: var(--black);
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border: none;
+      padding: 16px 48px;
+      cursor: none;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 12px;
+      transition: box-shadow .3s;
+    }
+    .btn-download:hover { box-shadow: 0 4px 24px rgba(201,168,76,.2); }
+
+    /* ── Error state ─────────────────────────────────── */
+    #step-error { text-align: center; padding: 40px 0; }
+    .err-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 12px;
+    }
+    .err-msg-global {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 960px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 52px 28px; min-height: 100vh; }
+      .field-row { grid-template-columns: 1fr; }
+      .tier-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur"></div>
+  <div id="cur-ring"></div>
+
+  <div class="page-wrap">
+
+    <!-- ══ SIDEBAR ══════════════════════════════════════ -->
+    <aside class="sidebar">
+      <div class="sb-glow"></div>
+      <div class="sb-top">
+        <a href="/" class="sb-logo">Sterling Sovereign</a>
+
+        <div class="sb-crest">
+          <svg viewBox="0 0 72 72" fill="none" width="72" height="72">
+            <circle cx="36" cy="36" r="34" stroke="#c9a84c" stroke-width=".5" opacity=".28"/>
+            <circle cx="36" cy="36" r="28" stroke="#c9a84c" stroke-width=".35" opacity=".15"/>
+            <path d="M22 30 L27 21 L36 26 L45 21 L50 30 L47 33 H25 Z" stroke="#c9a84c" stroke-width=".7" fill="rgba(201,168,76,.07)"/>
+            <path d="M25 33 H47 V44 Q36 51 25 44 Z" stroke="#c9a84c" stroke-width=".7" fill="rgba(201,168,76,.05)"/>
+            <line x1="36" y1="33" x2="36" y2="51" stroke="#c9a84c" stroke-width=".3" opacity=".35"/>
+            <line x1="25" y1="42" x2="47" y2="42" stroke="#c9a84c" stroke-width=".3" opacity=".35"/>
+            <circle cx="27" cy="25" r=".7" fill="#c9a84c" opacity=".4"/>
+            <circle cx="36" cy="22" r=".7" fill="#c9a84c" opacity=".4"/>
+            <circle cx="45" cy="25" r=".7" fill="#c9a84c" opacity=".4"/>
+          </svg>
+        </div>
+
+        <h2 class="sb-title">Your Sovereign<br><em>Assessment</em></h2>
+        <p class="sb-desc">Five minutes. A lifetime of clarity. Tell us who you are — we'll reveal who you're destined to become.</p>
+
+        <nav class="steps" id="steps-nav">
+          <div class="step-item active" data-step="1">
+            <div class="step-dot"><span>I</span></div>
+            <span class="step-label">Identity</span>
+          </div>
+          <div class="step-item" data-step="2">
+            <div class="step-dot"><span>II</span></div>
+            <span class="step-label">Ventures</span>
+          </div>
+          <div class="step-item" data-step="3">
+            <div class="step-dot"><span>III</span></div>
+            <span class="step-label">Ambition</span>
+          </div>
+          <div class="step-item" data-step="4">
+            <div class="step-dot"><span>IV</span></div>
+            <span class="step-label">Sovereign Tier</span>
+          </div>
+        </nav>
+      </div>
+
+      <p class="sb-note">Profiles generated in under 60 seconds · For entertainment & inspirational purposes · Not financial advice.</p>
+    </aside>
+
+    <!-- ══ MAIN ════════════════════════════════════════ -->
+    <main class="main">
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width: 25%"></div>
+        <span class="progress-label" id="progress-label">Step 1 of 4</span>
+      </div>
+
+      <!-- ── STEP 1 — Identity ─────────────────────── -->
+      <div class="step-panel active" id="step-1">
+        <span class="panel-eyebrow">Step I · Identity</span>
+        <h1 class="panel-title">Who are you,<br><em>Founder?</em></h1>
+        <p class="panel-desc">Begin with the essentials. Your profile is private — we use this to calibrate your archetype with precision.</p>
+
+        <div class="fields">
+          <div class="field-row">
+            <div class="field" id="f-first-name">
+              <label>First Name <span class="req">*</span></label>
+              <input type="text" id="first_name" placeholder="Alexander" autocomplete="given-name"/>
+              <span class="err-msg">This field is required.</span>
+            </div>
+            <div class="field" id="f-last-name">
+              <label>Last Name <span class="req">*</span></label>
+              <input type="text" id="last_name" placeholder="Whitmore" autocomplete="family-name"/>
+              <span class="err-msg">This field is required.</span>
+            </div>
+          </div>
+          <div class="field" id="f-email">
+            <label>Email Address <span class="req">*</span></label>
+            <input type="email" id="email" placeholder="a.whitmore@ventures.co.uk" autocomplete="email"/>
+            <span class="err-msg">Please enter a valid email address.</span>
+          </div>
+          <div class="field" id="f-linkedin">
+            <label>LinkedIn URL <span style="color:var(--muted); font-size:.52rem;">(optional — improves accuracy)</span></label>
+            <input type="url" id="linkedin_url" placeholder="linkedin.com/in/a-whitmore"/>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <span></span>
+          <button class="btn-next" onclick="nextStep(1)">
+            Continue
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M1 5H13M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2 — Ventures ─────────────────────── -->
+      <div class="step-panel" id="step-2">
+        <span class="panel-eyebrow">Step II · Ventures</span>
+        <h1 class="panel-title">Your empire,<br><em>so far.</em></h1>
+        <p class="panel-desc">The depth of your journey shapes the contours of your archetype. Be precise — this is your legacy we're mapping.</p>
+
+        <div class="fields">
+          <div class="field-row">
+            <div class="field">
+              <label>Company Name</label>
+              <input type="text" id="company" placeholder="Whitmore Ventures"/>
+            </div>
+            <div class="field">
+              <label>Sector <span class="req">*</span></label>
+              <select id="sector">
+                <option value="" disabled selected>Select your domain</option>
+                <option>FinTech</option>
+                <option>SaaS / B2B Software</option>
+                <option>Consumer Tech</option>
+                <option>E-Commerce / D2C</option>
+                <option>Real Estate</option>
+                <option>HealthTech</option>
+                <option>DeepTech / AI</option>
+                <option>Media & Content</option>
+                <option>Investment & Finance</option>
+                <option>Consulting & Services</option>
+                <option>Manufacturing</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field" id="f-sector">
+              <label>Annual Revenue</label>
+              <select id="annual_revenue">
+                <option value="" disabled selected>Select range</option>
+                <option value="pre-revenue">Pre-revenue</option>
+                <option value="0-50k">Under £50k</option>
+                <option value="50k-100k">£50k – £100k</option>
+                <option value="100k-500k">£100k – £500k</option>
+                <option value="500k-1M">£500k – £1M</option>
+                <option value="1M-5M">£1M – £5M</option>
+                <option value="5M-20M">£5M – £20M</option>
+                <option value="20M+">£20M+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Years of Experience <span class="req">*</span></label>
+              <input type="number" id="years_experience" placeholder="8" min="0" max="50"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Companies Founded</label>
+            <input type="number" id="founded_companies" placeholder="2" min="0" max="20"/>
+            <span class="hint">Including current ventures.</span>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button class="btn-back" onclick="prevStep(2)">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M13 5H1M5 9l-4-4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Back
+          </button>
+          <button class="btn-next" onclick="nextStep(2)">
+            Continue
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M1 5H13M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3 — Ambition ─────────────────────── -->
+      <div class="step-panel" id="step-3">
+        <span class="panel-eyebrow">Step III · Ambition</span>
+        <h1 class="panel-title">State your<br><em>sovereign ambition.</em></h1>
+        <p class="panel-desc">This is the most important field. Speak freely, boldly, and without qualification. The AI reads between the lines.</p>
+
+        <div class="fields">
+          <div class="field" id="f-ambition">
+            <label>Your Ambition Statement <span class="req">*</span></label>
+            <textarea id="ambition_statement" placeholder="In one or two sentences — describe what you are building and why it matters beyond profit…"></textarea>
+            <span class="hint">Example: "Build the dominant financial infrastructure for European founders before 35."</span>
+            <span class="err-msg">Please share your ambition — this is what shapes your profile.</span>
+          </div>
+
+          <div class="field">
+            <label>Founding Philosophy</label>
+            <select id="founding_philosophy">
+              <option value="" disabled selected>How do you build?</option>
+              <option value="capital-first">Capital-first — raise and deploy aggressively</option>
+              <option value="revenue-first">Revenue-first — profitable from day one</option>
+              <option value="network-first">Network-first — leverage before product</option>
+              <option value="product-first">Product-first — obsessive on craft</option>
+              <option value="vision-first">Vision-first — the mission above all</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>The one person whose trajectory you most admire</label>
+            <input type="text" id="inspiration" placeholder="e.g. Elon Musk, Coco Chanel, Andrew Carnegie…"/>
+            <span class="hint">Used to calibrate your Board of Invisible Advisors.</span>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button class="btn-back" onclick="prevStep(3)">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M13 5H1M5 9l-4-4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Back
+          </button>
+          <button class="btn-next" onclick="nextStep(3)">
+            Continue
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M1 5H13M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 4 — Tier ─────────────────────────── -->
+      <div class="step-panel" id="step-4">
+        <span class="panel-eyebrow">Step IV · Sovereign Tier</span>
+        <h1 class="panel-title">Choose your<br><em>rank.</em></h1>
+        <p class="panel-desc">Select the depth of your profile. Every tier includes the same precise assessment — only the scope of revelation differs.</p>
+
+        <div class="tier-cards" id="tier-cards">
+          <label class="tier-card" onclick="selectTier('baron')">
+            <input type="radio" name="tier" value="baron"/>
+            <span class="tc-name">Baron</span>
+            <span class="tc-price">£9</span>
+            <ul class="tc-feats">
+              <li>Prestige Score</li>
+              <li>Archetype</li>
+              <li>Latin Motto</li>
+              <li>4-page PDF</li>
+            </ul>
+          </label>
+          <label class="tier-card popular" onclick="selectTier('duke')">
+            <input type="radio" name="tier" value="duke"/>
+            <span class="tc-name">Duke</span>
+            <span class="tc-price">£29</span>
+            <ul class="tc-feats">
+              <li>Coat of Arms</li>
+              <li>Dynasty Blueprint</li>
+              <li>Board of Advisors</li>
+              <li>12-page PDF</li>
+            </ul>
+          </label>
+          <label class="tier-card" onclick="selectTier('chancellor')">
+            <input type="radio" name="tier" value="chancellor"/>
+            <span class="tc-name">Chancellor</span>
+            <span class="tc-price">£99</span>
+            <ul class="tc-feats">
+              <li>Reputation Strategy</li>
+              <li>Brand Brief</li>
+              <li>Black Card</li>
+              <li>16-page PDF</li>
+            </ul>
+          </label>
+        </div>
+
+        <div class="form-nav">
+          <button class="btn-back" onclick="prevStep(4)">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M13 5H1M5 9l-4-4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Back
+          </button>
+          <button class="btn-next" id="btn-submit" onclick="submitForm()">
+            Generate My Profile
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M1 5H13M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── LOADING ────────────────────────────────── -->
+      <div class="step-panel" id="step-loading" style="display:none;">
+        <div id="step-loading-inner">
+          <div class="loader"></div>
+          <h2 class="loading-title">Calibrating your sovereign identity…</h2>
+          <p class="loading-sub">The AI is consulting the archives. This takes about 30 seconds.</p>
+          <ul class="loading-steps" id="loading-steps">
+            <li id="ls-1">Analysing founder archetype</li>
+            <li id="ls-2">Computing Prestige Score</li>
+            <li id="ls-3">Summoning Board of Advisors</li>
+            <li id="ls-4">Forging your Coat of Arms</li>
+            <li id="ls-5">Compiling dynasty blueprint</li>
+            <li id="ls-6">Rendering sovereign PDF</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── SUCCESS ────────────────────────────────── -->
+      <div class="step-panel" id="step-success" style="display:none;">
+        <div class="success-crest">
+          <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
+            <circle cx="40" cy="40" r="38" stroke="#c9a84c" stroke-width=".6" opacity=".35"/>
+            <path d="M26 34 L31 24 L40 29 L49 24 L54 34 L51 37 H29 Z" stroke="#c9a84c" stroke-width=".75" fill="rgba(201,168,76,.1)"/>
+            <path d="M29 37 H51 V49 Q40 57 29 49 Z" stroke="#c9a84c" stroke-width=".75" fill="rgba(201,168,76,.08)"/>
+          </svg>
+        </div>
+
+        <h1 class="success-title">Your profile<br>has been <em>forged.</em></h1>
+        <p class="success-sub" id="success-sub">Check your inbox — your Sovereign profile has been delivered.</p>
+
+        <div class="summary-card" id="summary-card" style="display:none;">
+          <div class="sc-head">
+            <span class="sc-brand">Sterling Sovereign</span>
+            <span class="sc-mem" id="s-member">Member #0000</span>
+          </div>
+          <div class="sc-body">
+            <div class="sc-name" id="s-name">—</div>
+            <span class="sc-arch" id="s-arch">—</span>
+            <div class="sc-scores">
+              <div class="sc-score">
+                <span class="sc-val" id="s-prestige">—</span>
+                <span class="sc-lbl">Prestige Score</span>
+              </div>
+              <div class="sc-score">
+                <span class="sc-val" id="s-rank" style="font-size:1.1rem; padding-top:5px;">—</span>
+                <span class="sc-lbl">Rank</span>
+              </div>
+              <div class="sc-score">
+                <span class="sc-val" id="s-bloodline">—</span>
+                <span class="sc-lbl">Bloodline Score</span>
+              </div>
+            </div>
+            <div class="sc-motto" id="s-motto">—</div>
+            <div class="sc-badge">
+              <span id="s-badge">— · Order of Sovereigns</span>
+            </div>
+          </div>
+        </div>
+
+        <a class="btn-download" id="btn-download" href="#" target="_blank">
+          <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+            <path d="M7 1v10M3 8l4 4 4-4M1 14h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          Download PDF Profile
+        </a>
+      </div>
+
+      <!-- ── ERROR ──────────────────────────────────── -->
+      <div class="step-panel" id="step-error" style="display:none;">
+        <h2 class="err-title">Something went wrong.</h2>
+        <p class="err-msg-global" id="err-detail">The assessment could not be completed. Please try again.</p>
+        <button class="btn-next" onclick="resetForm()">
+          Try Again
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+            <path d="M1 5H13M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+    </main>
+  </div><!-- end page-wrap -->
+
+  <script>
+    // ── Cursor ────────────────────────────────────────
+    const cur  = document.getElementById('cur');
+    const ring = document.getElementById('cur-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function loop() {
+      cur.style.left  = mx + 'px'; cur.style.top  = my + 'px';
+      rx += (mx - rx) * .1; ry += (my - ry) * .1;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a,button,input,select,textarea,label').forEach(el => {
+      el.addEventListener('mouseenter', () => { cur.style.width='18px'; cur.style.height='18px'; ring.style.width='54px'; ring.style.height='54px'; ring.style.opacity='.2'; });
+      el.addEventListener('mouseleave', () => { cur.style.width='8px';  cur.style.height='8px';  ring.style.width='32px'; ring.style.height='32px'; ring.style.opacity='.5'; });
+    });
+
+    // ── State ─────────────────────────────────────────
+    let currentStep = 1;
+    let selectedTier = 'duke';
+    let profileData  = null;
+
+    // Default duke selected
+    document.querySelector('.tier-card.popular').classList.add('selected');
+
+    // ── Step navigation ───────────────────────────────
+    function showStep(n) {
+      // Hide all panels
+      document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+      const panel = document.getElementById('step-' + n);
+      if (panel) { panel.style.display = 'block'; panel.classList.add('active'); }
+
+      // Update sidebar steps
+      document.querySelectorAll('.step-item').forEach(item => {
+        const s = parseInt(item.dataset.step);
+        item.classList.remove('active', 'done');
+        if (s === n)   item.classList.add('active');
+        if (s < n)     item.classList.add('done');
+      });
+
+      // Update progress
+      const pct = Math.round((n / 4) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = `Step ${n} of 4`;
+
+      currentStep = n;
+    }
+
+    function nextStep(from) {
+      if (!validateStep(from)) return;
+      showStep(from + 1);
+      window.scrollTo(0, 0);
+    }
+
+    function prevStep(from) {
+      showStep(from - 1);
+      window.scrollTo(0, 0);
+    }
+
+    // ── Validation ────────────────────────────────────
+    function validateStep(n) {
+      let valid = true;
+
+      const check = (fieldId, inputId, testFn) => {
+        const wrap  = document.getElementById(fieldId);
+        const input = document.getElementById(inputId);
+        if (!wrap || !input) return;
+        const ok = testFn(input.value.trim());
+        wrap.classList.toggle('error', !ok);
+        if (!ok) valid = false;
+      };
+
+      if (n === 1) {
+        check('f-first-name', 'first_name', v => v.length > 0);
+        check('f-last-name',  'last_name',  v => v.length > 0);
+        check('f-email',      'email',      v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+      }
+      if (n === 2) {
+        const sector = document.getElementById('sector');
+        const yrs    = document.getElementById('years_experience');
+        const ok1 = sector.value !== '';
+        const ok2 = yrs.value !== '';
+        document.getElementById('f-sector').classList.toggle('error', !ok1);
+        if (!ok1 || !ok2) valid = false;
+      }
+      if (n === 3) {
+        check('f-ambition', 'ambition_statement', v => v.length >= 10);
+      }
+
+      return valid;
+    }
+
+    // ── Tier selection ────────────────────────────────
+    function selectTier(tier) {
+      selectedTier = tier;
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+    }
+
+    // ── Loading animation ─────────────────────────────
+    function animateLoading() {
+      const steps = ['ls-1','ls-2','ls-3','ls-4','ls-5','ls-6'];
+      steps.forEach((id, i) => {
+        setTimeout(() => {
+          document.getElementById(id).classList.add('done');
+        }, 1200 + i * 2200);
+      });
+    }
+
+    // ── Submit ────────────────────────────────────────
+    async function submitForm() {
+      if (!validateStep(4)) return;
+
+      const firstName = document.getElementById('first_name').value.trim();
+      const lastName  = document.getElementById('last_name').value.trim();
+      const ambition  = document.getElementById('ambition_statement').value.trim();
+      const insp      = document.getElementById('inspiration').value.trim();
+      const phil      = document.getElementById('founding_philosophy').value;
+
+      // Build enriched ambition context
+      let enriched = ambition;
+      if (insp)  enriched += ` (Inspired by: ${insp})`;
+      if (phil)  enriched += ` (Building style: ${phil})`;
+
+      const payload = {
+        email:               document.getElementById('email').value.trim(),
+        full_name:           `${firstName} ${lastName}`,
+        linkedin_url:        document.getElementById('linkedin_url').value.trim() || null,
+        company:             document.getElementById('company').value.trim() || null,
+        sector:              document.getElementById('sector').value || null,
+        annual_revenue:      document.getElementById('annual_revenue').value || null,
+        years_experience:    parseInt(document.getElementById('years_experience').value) || null,
+        founded_companies:   parseInt(document.getElementById('founded_companies').value) || 0,
+        ambition_statement:  enriched,
+        tier:                selectedTier,
+      };
+
+      // Show loading
+      document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+      document.getElementById('step-loading').style.display = 'block';
+      animateLoading();
+
+      try {
+        const res  = await fetch('/generate-profile', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || `Server error ${res.status}`);
+        }
+
+        profileData = await res.json();
+
+        // Small delay so loading steps finish their animation
+        setTimeout(() => showSuccess(profileData, payload.full_name), 6000);
+
+      } catch (e) {
+        setTimeout(() => {
+          document.getElementById('step-loading').style.display = 'none';
+          document.getElementById('step-error').style.display   = 'block';
+          document.getElementById('err-detail').textContent      = e.message || 'Unexpected error. Please try again.';
+        }, 2000);
+      }
+    }
+
+    // ── Show success ──────────────────────────────────
+    function showSuccess(data, fullName) {
+      document.getElementById('step-loading').style.display = 'none';
+      document.getElementById('step-success').style.display = 'block';
+
+      // Populate summary card
+      document.getElementById('s-member').textContent  = `Member ${data.profile_id} · ${data.summary.rank || ''}`;
+      document.getElementById('s-name').textContent    = fullName;
+      document.getElementById('s-arch').textContent    = data.summary.archetype || '—';
+      document.getElementById('s-prestige').textContent = data.summary.prestige_score || '—';
+      document.getElementById('s-rank').textContent     = data.summary.rank || '—';
+      document.getElementById('s-bloodline').textContent = '—'; // not in summary
+      document.getElementById('s-badge').textContent    = `${data.summary.rank || 'Sovereign'} · Order of Sovereigns`;
+
+      if (data.summary.motto_latin) {
+        document.getElementById('s-motto').innerHTML = `<em>"${data.summary.motto_latin}"</em>`;
+      }
+
+      document.getElementById('summary-card').style.display = 'block';
+      document.getElementById('btn-download').href = data.pdf_url;
+    }
+
+    // ── Reset ─────────────────────────────────────────
+    function resetForm() {
+      document.getElementById('step-error').style.display = 'none';
+      showStep(1);
+    }
+
+    // Init — show step 1
+    showStep(1);
+  </script>
+</body>
+</html>
